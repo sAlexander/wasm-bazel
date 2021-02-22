@@ -1,21 +1,22 @@
-# wasm-bazel
+# wasm_bazel
 
 A simple set of bazel rules and macros to build web assembly files with the Emscripten compiler.
 
 # Usage
 
+_file: WORKSPACE_
 ```
-# WORKSPACE
-
 http_archive(
-    name = "wasm-bazel",
+    name = "wasm_bazel",
     urls = [{ LATEST RELEASE URL FOR THIS REPO }],
 )
+load("@wasm_bazel//:deps.bzl", "wasm_bazel_dev_dependencies")
+wasm_bazel_dev_dependencies()
 ```
 
+_file: BUILD_
 ```
-# BUILD file somewhere in your project
-load("@wasm-bazel//:wasm.bzl", "cc_native_wasm_library", "cc_native_wasm_binary")
+load("@wasm_bazel//:wasm.bzl", "cc_native_wasm_library", "cc_native_wasm_binary")
 
 # Defines both a cc_library for the host system and a wasm_library for web assembly.
 cc_native_wasm_library(
