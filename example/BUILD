@@ -8,5 +8,6 @@ wasm_library(
 
 wasm_binary(
 	name = "binary",
+	srcs = ["binary.cc"],
 	deps = [":library"],
 )
