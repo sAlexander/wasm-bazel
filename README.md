@@ -7,6 +7,16 @@ Caveats (and TODOs):
  - Only works on linux
  - Only tested on relatively simple examples
 
+# Difference from CROSSTOOLS
+
+How is this different from using [Emscripten with CROSSTOOLs](https://docs.bazel.build/versions/0.22.0/tutorial/crosstool.html)?
+
+CROSSTOOLs allows you to build your entire c++ project for either the host system (`--host_crosstool_top=@bazel_tools//tools/cpp:toolchain`) or the wasm system (`--crosstool_top=//toolchain:emscripten`). This is great if you're exclusively targeting one system or the other.
+
+This project allows you to have wasm build rules that co-exist with your host system build rules. For example, if you're building a webserver in C++ that should serve compiled wasm code, you can have a set of target that define the wasm binary (built using Emscripten) and another set of targets for the C++ webserver (built using your host compiler).
+
+Neither is strictly better, they just serve different purposes. My recommendation: Use CROSSTOOLs if your entire project is built for the host or wasm (but never both); otherwise consider this set of tools.
+
 # Usage
 
 _file: WORKSPACE_
