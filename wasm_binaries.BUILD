@@ -12,7 +12,7 @@ py_binary(
   ],
   data = [
 	  ":all",
-	  "@node//:all",
+	  "@wasm_node//:all",
   ],
   env = {
 	"EM_CACHE": "/tmp/.emscripten_cache",

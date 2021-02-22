@@ -3,7 +3,7 @@
 @@ -0,0 +1,9 @@
 +import os
 +emsdk_path = os.path.dirname(os.environ.get('EM_CONFIG')).replace('\\', '/')
-+NODE_JS = emsdk_path + '/../../node/bin/node'
++NODE_JS = emsdk_path + '/../../wasm_node/bin/node'
 +LLVM_ROOT = emsdk_path + '/../bin'
 +BINARYEN_ROOT = emsdk_path + '/..'
 +EMSCRIPTEN_ROOT = emsdk_path + '/../emscripten'
