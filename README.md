@@ -2,7 +2,7 @@
 
 A simple set of bazel rules and macros to build web assembly files with the Emscripten compiler.
 
-Usage:
+# Usage
 
 ```
 # WORKSPACE
@@ -41,3 +41,6 @@ cc_native_wasm_library(
 
 See a working example in the examples directory.
 
+# License
+
+Licensed under MIT (see LICENSE).
