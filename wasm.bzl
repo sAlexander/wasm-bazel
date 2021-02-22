@@ -138,7 +138,7 @@ wasm_library = rule(
         "hdrs": attr.label_list(allow_files = True),
         "deps": attr.label_list(providers = [WasmInfo]),
         "_compiler": attr.label(
-            default = Label("@wasm-binaries//:emcc"),
+            default = Label("@wasm_binaries//:emcc"),
             executable = True,
             cfg = "exec",
         ),
@@ -160,7 +160,7 @@ wasm_binary = rule(
         "hdrs": attr.label_list(allow_files = True),
         "deps": attr.label_list(providers = [WasmInfo]),
         "_compiler": attr.label(
-            default = Label("@wasm-binaries//:emcc"),
+            default = Label("@wasm_binaries//:emcc"),
             executable = True,
             cfg = "exec",
         ),

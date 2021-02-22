@@ -1,0 +1,13 @@
+--- /dev/null	2021-02-16 22:12:04.459676267 -0700
++++ emscripten/.emscripten	2021-02-21 11:29:13.749582144 -0700
+@@ -0,0 +1,9 @@
++import os
++emsdk_path = os.path.dirname(os.environ.get('EM_CONFIG')).replace('\\', '/')
++NODE_JS = emsdk_path + '/../../node/bin/node'
++LLVM_ROOT = emsdk_path + '/../bin'
++BINARYEN_ROOT = emsdk_path + '/..'
++EMSCRIPTEN_ROOT = emsdk_path + '/../emscripten'
++TEMP_DIR = emsdk_path + '/tmp'
++COMPILER_ENGINE = NODE_JS
++JS_ENGINES = [NODE_JS]
+

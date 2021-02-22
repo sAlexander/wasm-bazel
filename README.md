@@ -9,6 +9,7 @@ _file: WORKSPACE_
 http_archive(
     name = "wasm_bazel",
     urls = [{ LATEST RELEASE URL FOR THIS REPO }],
+    strip_prefix = "wasm_bazel-{RELEASE VERSION NUMBER}",
 )
 load("@wasm_bazel//:deps.bzl", "wasm_bazel_dev_dependencies")
 wasm_bazel_dev_dependencies()
