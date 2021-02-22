@@ -17,7 +17,7 @@ def cc_native_wasm_library(name, deps = [], **kwargs):
         **kwargs
     )
 
-def cc_native_wasm_binary(name, deps = [], **kwargs):
+def cc_native_wasm_binary(name, deps = [], bind=False, **kwargs):
     """Creates a cc_binary ("name") and a wasm_binary ("name-wasm")."""
     native.cc_binary(
         name = name,
@@ -28,6 +28,7 @@ def cc_native_wasm_binary(name, deps = [], **kwargs):
     wasm_binary(
         name = "%s-wasm" % name,
         deps = ["%s-wasm" % dep for dep in deps],
+        bind = bind,
         **kwargs
     )
 
@@ -90,6 +91,8 @@ def _compile(ctx, binary = False):
         if mnemonic == "EmccCompileLibrary":
             # For library, we want to build the intermediate .o file.
             args.add("-c")
+        if mnemonic == "EmccLinkBinary" and ctx.attr.bind:
+            args.add("--bind")
         args.add("-I.")
 
         ctx.actions.run(
@@ -159,6 +162,7 @@ wasm_binary = rule(
         "srcs": attr.label_list(allow_files = True),
         "hdrs": attr.label_list(allow_files = True),
         "deps": attr.label_list(providers = [WasmInfo]),
+        "bind": attr.bool(default=False, doc="Link in the embind library"),
         "_compiler": attr.label(
             default = Label("@wasm_binaries//:emcc"),
             executable = True,
