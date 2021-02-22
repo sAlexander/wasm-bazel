@@ -166,3 +166,26 @@ wasm_binary = rule(
         ),
     },
 )
+
+def _wasm_extract_impl(ctx):
+  key = ctx.attr._extract
+  obj = getattr(ctx.attr.src[WasmBinaryInfo], key)
+  return [DefaultInfo(files=depset([obj]))]
+
+# Extracts the js or wasm file from a wasm_binary.
+wasm_extract_js = rule(
+    implementation = _wasm_extract_impl,
+    attrs = {
+        "src": attr.label(providers = [WasmBinaryInfo]),
+        "_extract": attr.string(default='js'),
+    },
+)
+wasm_extract_wasm = rule(
+    implementation = _wasm_extract_impl,
+    attrs = {
+        "src": attr.label(providers = [WasmBinaryInfo]),
+        "_extract": attr.string(default='wasm'),
+    },
+)
+
+

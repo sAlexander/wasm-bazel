@@ -1,4 +1,4 @@
-load("@wasm_bazel//:wasm.bzl", "cc_native_wasm_binary", "cc_native_wasm_library")
+load("//:wasm.bzl", "cc_native_wasm_binary", "cc_native_wasm_library", "wasm_extract_js", "wasm_extract_wasm")
 
 cc_native_wasm_library(
     name = "library",
@@ -10,4 +10,14 @@ cc_native_wasm_binary(
     name = "binary",
     srcs = ["binary.cc"],
     deps = [":library"],
+)
+
+wasm_extract_js(
+	name = "binary-wasm-js",
+	src = ":binary-wasm",
+)
+
+wasm_extract_wasm(
+	name = "binary-wasm-wasm",
+	src = ":binary-wasm",
 )
