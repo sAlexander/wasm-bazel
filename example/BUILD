@@ -1,4 +1,4 @@
-load("//:wasm.bzl", "cc_native_wasm_binary", "cc_native_wasm_library")
+load("@wasm_bazel//:wasm.bzl", "cc_native_wasm_binary", "cc_native_wasm_library")
 
 cc_native_wasm_library(
     name = "library",

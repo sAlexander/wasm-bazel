@@ -6,6 +6,8 @@ A simple set of bazel rules and macros to build web assembly files with the Emsc
 
 _file: WORKSPACE_
 ```
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 http_archive(
     name = "wasm_bazel",
     urls = [{ LATEST RELEASE URL FOR THIS REPO }],

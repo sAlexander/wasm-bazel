@@ -1,4 +1,4 @@
-#include "example/library.h"
+#include "library.h"
 
 int main() {
   PrintHelloWorld();
