@@ -2,6 +2,11 @@
 
 A simple set of bazel rules and macros to build web assembly files with the Emscripten compiler.
 
+Caveats (and TODOs):
+
+ - Only works on linux
+ - Only tested on relatively simple examples
+
 # Usage
 
 _file: WORKSPACE_
