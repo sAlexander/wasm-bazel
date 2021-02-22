@@ -1,12 +1,12 @@
-load("//:wasm.bzl", "wasm_library", "wasm_binary")
+load("//:wasm.bzl", "cc_native_wasm_library", "cc_native_wasm_binary")
 
-wasm_library(
+cc_native_wasm_library(
 	name = "library",
 	hdrs = ["library.h",],
 	srcs = ["library.cc",],
 )
 
-wasm_binary(
+cc_native_wasm_binary(
 	name = "binary",
 	srcs = ["binary.cc"],
 	deps = [":library"],

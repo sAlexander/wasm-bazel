@@ -1,6 +1,32 @@
 # vim: set expandtab:
 # vim: set tabstop=2:
 
+# TODO: Add support for other cc_(library|binary) arguments to wasm_(library|binary).
+
+def cc_native_wasm_library(name, deps=[], **kwargs):
+  """Creates a cc_library ("name") and a wasm_library ("name-wasm")."""
+  native.cc_library(
+      name=name,
+      deps=deps,
+      **kwargs)
+
+  wasm_library(
+      name="%s-wasm" % name,
+      deps=["%s-wasm" % dep for dep in deps],
+      **kwargs)
+
+def cc_native_wasm_binary(name, deps=[], **kwargs):
+  """Creates a cc_binary ("name") and a wasm_binary ("name-wasm")."""
+  native.cc_binary(
+      name=name,
+      deps=deps,
+      **kwargs)
+
+  wasm_binary(
+      name="%s-wasm" % name,
+      deps=["%s-wasm" % dep for dep in deps],
+      **kwargs)
+
 WasmInfo = provider(
   "Info needed to compile/link c++ using the emscripten compiler.",
   fields={
