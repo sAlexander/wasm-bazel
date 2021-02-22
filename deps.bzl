@@ -24,7 +24,7 @@ def wasm_bazel_dev_dependencies():
     #    - Look at the version used in emsdk.
     http_archive(
         name = "wasm_node",
-		build_file = "@wasm_bazel//:wasm_node.BUILD",
+        build_file = "@wasm_bazel//:wasm_node.BUILD",
         strip_prefix = "node-v14.15.5-linux-x64",
         sha256 = "fa198afa9a2872cde991c3aa71796894bf7b5310d6eb178c3eafcf66e3ae79a7",
         urls = ["https://storage.googleapis.com/webassembly/emscripten-releases-builds/deps/node-v14.15.5-linux-x64.tar.xz"],

@@ -17,7 +17,7 @@ def cc_native_wasm_library(name, deps = [], **kwargs):
         **kwargs
     )
 
-def cc_native_wasm_binary(name, deps = [], bind=False, **kwargs):
+def cc_native_wasm_binary(name, deps = [], bind = False, modularize = False, **kwargs):
     """Creates a cc_binary ("name") and a wasm_binary ("name-wasm")."""
     native.cc_binary(
         name = name,
@@ -91,8 +91,11 @@ def _compile(ctx, binary = False):
         if mnemonic == "EmccCompileLibrary":
             # For library, we want to build the intermediate .o file.
             args.add("-c")
-        if mnemonic == "EmccLinkBinary" and ctx.attr.bind:
-            args.add("--bind")
+        if mnemonic == "EmccLinkBinary":
+            if ctx.attr.bind:
+                args.add("--bind")
+            if ctx.attr.modularize:
+                args.add("-s", "MODULARIZE=1")
         args.add("-I.")
 
         ctx.actions.run(
@@ -162,7 +165,8 @@ wasm_binary = rule(
         "srcs": attr.label_list(allow_files = True),
         "hdrs": attr.label_list(allow_files = True),
         "deps": attr.label_list(providers = [WasmInfo]),
-        "bind": attr.bool(default=False, doc="Link in the embind library"),
+        "bind": attr.bool(default = False, doc = "Link in the embind library"),
+        "modularize": attr.bool(default = False, doc = "Pass -s MODULARIZE=1 to emcc to create an es6 module."),
         "_compiler": attr.label(
             default = Label("@wasm_binaries//:emcc"),
             executable = True,
@@ -172,24 +176,22 @@ wasm_binary = rule(
 )
 
 def _wasm_extract_impl(ctx):
-  key = ctx.attr._extract
-  obj = getattr(ctx.attr.src[WasmBinaryInfo], key)
-  return [DefaultInfo(files=depset([obj]))]
+    key = ctx.attr._extract
+    obj = getattr(ctx.attr.src[WasmBinaryInfo], key)
+    return [DefaultInfo(files = depset([obj]))]
 
 # Extracts the js or wasm file from a wasm_binary.
 wasm_extract_js = rule(
     implementation = _wasm_extract_impl,
     attrs = {
         "src": attr.label(providers = [WasmBinaryInfo]),
-        "_extract": attr.string(default='js'),
+        "_extract": attr.string(default = "js"),
     },
 )
 wasm_extract_wasm = rule(
     implementation = _wasm_extract_impl,
     attrs = {
         "src": attr.label(providers = [WasmBinaryInfo]),
-        "_extract": attr.string(default='wasm'),
+        "_extract": attr.string(default = "wasm"),
     },
 )
-
-

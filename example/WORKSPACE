@@ -1,13 +1,15 @@
 workspace(
-	name = "example"
+    name = "example",
 )
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "wasm_bazel",
-	urls = ["https://github.com/sAlexander/wasm_bazel/archive/main.tar.gz"],
     strip_prefix = "wasm_bazel-main",
+    urls = ["https://github.com/sAlexander/wasm_bazel/archive/main.tar.gz"],
 )
+
 load("@wasm_bazel//:deps.bzl", "wasm_bazel_dev_dependencies")
+
 wasm_bazel_dev_dependencies()
