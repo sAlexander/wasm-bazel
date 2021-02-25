@@ -3,6 +3,12 @@
 
 # TODO: Add support for other cc_(library|binary) arguments to wasm_(library|binary).
 
+COMPILATION_MODE_FLAGS = {
+    "opt": ["-O2", "-DNDEBUG"],
+    "fastbuild": ["-gmlt", "-Wl,-S"],
+    "dbg": ["-g"],
+}
+
 def cc_native_wasm_library(name, deps = [], **kwargs):
     """Creates a cc_library ("name") and a wasm_library ("name-wasm")."""
     native.cc_library(
@@ -85,11 +91,17 @@ def _compile(ctx, binary = False):
     for mnemonic, inputs, outputs in mnemonic_ins_outs:
         all_inputs = depset(transitive = [inputs, hdrs, tool_deps])
 
+        compilation_mode = ctx.var["COMPILATION_MODE"]
+        if compilation_mode not in COMPILATION_MODE_FLAGS:
+            fail("Unknown compilation mode: " + compilation_mode)
+        compilation_mode_flags = COMPILATION_MODE_FLAGS[compilation_mode]
+
         args = ctx.actions.args()
         args.add_all(inputs.to_list())
         args.add("-o", outputs[0])
         args.add_all(ctx.fragments.cpp.cxxopts)
         args.add_all(ctx.fragments.cpp.copts)
+        args.add_all(compilation_mode_flags)
         if mnemonic == "EmccCompileLibrary":
             # For library, we want to build the intermediate .o file.
             args.add("-c")
@@ -107,6 +119,9 @@ def _compile(ctx, binary = False):
             inputs = all_inputs,
             outputs = outputs,
             env = {
+                # TODO: Remove this cache -- it bypasses the bazel build process 
+                # and will cause problems (for example, the cache will not be 
+                # cleaned when we switch from -c opt to -c dbg, and we will get unexpected results).
                 "EM_CACHE": "/tmp/.cache",
             },
         )
