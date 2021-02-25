@@ -88,6 +88,8 @@ def _compile(ctx, binary = False):
         args = ctx.actions.args()
         args.add_all(inputs.to_list())
         args.add("-o", outputs[0])
+        args.add_all(ctx.fragments.cpp.cxxopts)
+        args.add_all(ctx.fragments.cpp.copts)
         if mnemonic == "EmccCompileLibrary":
             # For library, we want to build the intermediate .o file.
             args.add("-c")
@@ -149,6 +151,7 @@ wasm_library = rule(
             cfg = "exec",
         ),
     },
+    fragments = ["cpp"],
 )
 
 # Generates a webassembly binary using Emscripten.
@@ -173,6 +176,7 @@ wasm_binary = rule(
             cfg = "exec",
         ),
     },
+    fragments = ["cpp"],
 )
 
 def _wasm_extract_impl(ctx):

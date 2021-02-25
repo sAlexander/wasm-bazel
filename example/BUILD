@@ -13,7 +13,7 @@ cc_native_wasm_binary(
 )
 
 cc_native_wasm_binary(
-    name = "binary_bind",
+    name = "binary_bind-wasm",
     srcs = ["binary_bind.cc"],
     bind = True,
     modularize = True,
