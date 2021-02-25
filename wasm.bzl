@@ -5,7 +5,7 @@
 
 COMPILATION_MODE_FLAGS = {
     "opt": ["-O2", "-DNDEBUG"],
-    "fastbuild": ["-gmlt", "-Wl,-S"],
+    "fastbuild": ["-gmlt"],
     "dbg": ["-g"],
 }
 
