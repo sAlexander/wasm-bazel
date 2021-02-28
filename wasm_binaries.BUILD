@@ -14,5 +14,4 @@ py_binary(
 	  ":all",
 	  "@wasm_node//:all",
   ],
- },
 )
