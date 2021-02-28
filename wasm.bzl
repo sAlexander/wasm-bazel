@@ -115,6 +115,7 @@ def _compile(ctx, binary = False):
         ctx.actions.run(
             mnemonic = mnemonic,
             executable = ctx.executable._compiler,
+            tools = [ctx.executable._compiler],
             arguments = [args],
             inputs = all_inputs,
             outputs = outputs,
