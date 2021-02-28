@@ -14,7 +14,5 @@ py_binary(
 	  ":all",
 	  "@wasm_node//:all",
   ],
-  env = {
-	"EM_CACHE": "/tmp/.emscripten_cache",
-  },
+ },
 )
