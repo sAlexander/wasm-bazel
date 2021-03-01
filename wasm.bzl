@@ -43,6 +43,8 @@ WasmInfo = provider(
     fields = {
         "hdrs": "depset of header Files from transitive dependencies.",
         "objs": "depset of Files from compilation.",
+        "linkopts": "A set of linker options to use in the link command.",
+        "includes": "A set of include directives for every compile and link command",
     },
 )
 
@@ -53,6 +55,9 @@ WasmBinaryInfo = provider(
         "wasm": "the wasm file produced.",
     },
 )
+
+def _flatten(array):
+    return [out for entry in array for out in entry]
 
 def _extract_and_flatten(array, pos):
     return [out for entry in array for out in entry[pos]]
@@ -65,6 +70,12 @@ def _compile(ctx, binary = False):
     """
     transitive_hdrs = [dep[WasmInfo].hdrs for dep in ctx.attr.deps]
     transitive_objs = [dep[WasmInfo].objs for dep in ctx.attr.deps]
+
+    linkopts = ctx.attr.linkopts + _flatten([dep[WasmInfo].linkopts for dep in ctx.attr.deps])
+    includes = [
+        "{root}/{path}".format(root = ctx.label.workspace_root, path = i)
+        for i in ctx.attr.includes
+    ] + _flatten([dep[WasmInfo].includes for dep in ctx.attr.deps])
 
     tool_deps = ctx.attr._compiler.default_runfiles.files
 
@@ -99,9 +110,11 @@ def _compile(ctx, binary = False):
         args = ctx.actions.args()
         args.add_all(inputs.to_list())
         args.add("-o", outputs[0])
+        args.add_all(ctx.attr.copts)
         args.add_all(ctx.fragments.cpp.cxxopts)
         args.add_all(ctx.fragments.cpp.copts)
         args.add_all(compilation_mode_flags)
+        args.add_all(_flatten(zip(["-isystem"] * len(includes), includes)))
         if mnemonic == "EmccCompileLibrary":
             # For library, we want to build the intermediate .o file.
             args.add("-c")
@@ -110,6 +123,7 @@ def _compile(ctx, binary = False):
                 args.add("--bind")
             if ctx.attr.modularize:
                 args.add("-s", "MODULARIZE=1")
+            args.add_all(linkopts)
         args.add("-I.")
 
         ctx.actions.run(
@@ -120,8 +134,8 @@ def _compile(ctx, binary = False):
             inputs = all_inputs,
             outputs = outputs,
             env = {
-                # TODO: Remove this cache -- it bypasses the bazel build process 
-                # and will cause problems (for example, the cache will not be 
+                # TODO: Remove this cache -- it bypasses the bazel build process
+                # and will cause problems (for example, the cache will not be
                 # cleaned when we switch from -c opt to -c dbg, and we will get unexpected results).
                 "EM_CACHE": "/tmp/.cache",
             },
@@ -139,7 +153,7 @@ def _compile(ctx, binary = False):
         rval.append(WasmBinaryInfo(js = out_js, wasm = out_wasm))
     else:
         # For library, we produce WasmInfo.
-        rval.append(WasmInfo(hdrs = hdrs, objs = depset(objs, transitive = transitive_objs)))
+        rval.append(WasmInfo(hdrs = hdrs, objs = depset(objs, transitive = transitive_objs), linkopts = linkopts, includes = includes))
 
     return rval
 
@@ -161,6 +175,9 @@ wasm_library = rule(
         "srcs": attr.label_list(allow_files = True),
         "hdrs": attr.label_list(allow_files = True),
         "deps": attr.label_list(providers = [WasmInfo]),
+        "copts": attr.string_list(default = []),
+        "linkopts": attr.string_list(default = []),
+        "includes": attr.string_list(default = []),
         "_compiler": attr.label(
             default = Label("@wasm_binaries//:emcc"),
             executable = True,
@@ -184,6 +201,9 @@ wasm_binary = rule(
         "srcs": attr.label_list(allow_files = True),
         "hdrs": attr.label_list(allow_files = True),
         "deps": attr.label_list(providers = [WasmInfo]),
+        "copts": attr.string_list(default = []),
+        "linkopts": attr.string_list(default = []),
+        "includes": attr.string_list(default = []),
         "bind": attr.bool(default = False, doc = "Link in the embind library"),
         "modularize": attr.bool(default = False, doc = "Pass -s MODULARIZE=1 to emcc to create an es6 module."),
         "_compiler": attr.label(
