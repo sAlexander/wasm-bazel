@@ -35,6 +35,7 @@ def cc_native_wasm_binary(name, deps = [], bind = False, modularize = False, **k
         name = "%s-wasm" % name,
         deps = ["%s-wasm" % dep for dep in deps],
         bind = bind,
+        modularize = modularize,
         **kwargs
     )
 
